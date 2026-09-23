@@ -272,7 +272,7 @@ footer {
     </div>
 
     <div class="nav-buttons">
-        <button class="nav-btn" onclick="openAuthModal()">Login</button>
+        <button class="nav-btn"  id="loginBtn" onclick="openAuthModal()">Login</button>
         <button class="nav-btn">Admin</button>
     </div>
 </nav>
@@ -347,6 +347,24 @@ footer {
 </script>
     <script>
   let isSignup = false;
+        async function updateAuthButton() {
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  const loginBtn = document.getElementById("loginBtn");
+  if (session) {
+    loginBtn.innerText = "Logout";
+    loginBtn.onclick = handleLogout;
+  } else {
+    loginBtn.innerText = "Login";
+    loginBtn.onclick = openAuthModal;
+  }
+}
+
+async function handleLogout() {
+  await supabaseClient.auth.signOut();
+  location.reload();
+}
+
+updateAuthButton();
 
   function openAuthModal() {
     document.getElementById("authModal").style.display = "flex";
